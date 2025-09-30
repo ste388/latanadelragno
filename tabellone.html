@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+DW+Pica:ital@0;1&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IM Fell DW Pica', serif;
+            background: linear-gradient(135deg, #1f2937 0%, #0c0a09 100%);
+            background-attachment: fixed;
+            background-image: url('https://i.imgur.com/zUW90y2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: multiply;
+        }
+        .grid-cell {
+            width: 50px;
+            height: 50px;
+            background-color: #6b4e36;
+            border: 2px solid #a38c75;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            color: #d1b499;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            user-select: none;
+        }
+        .grid-cell:hover {
+            transform: scale(1.1);
+        }
+        .grid-cell.selected {
+            background-color: #967d64;
+            color: #3b2b1d;
+            border-color: #d1b499;
+        }
+        .header-title {
+            font-family: 'Cinzel Decorative', cursive;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #d1b499;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
+        }
+        .display-info {
+            font-family: 'Cinzel Decorative', cursive;
+            color: #d1b499;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .button-fantasy {
+            font-family: 'Cinzel Decorative', cursive;
+            background-color: #7a3d3d;
+            border: 2px solid #d1b499;
+            color: #d1b499;
+            padding: 8px 16px;
+            font-weight: bold;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .button-fantasy:hover {
+            background-color: #9b4f4f;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+        /* Modal specific styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #453224;
+            color: #d1b499;
+            padding: 30px;
+            border-radius: 1rem;
+            border: 3px solid #6b4e36;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            font-family: 'IM Fell DW Pica', serif;
+            max-width: 400px;
+            width: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .modal-content h2 {
+            font-family: 'Cinzel Decorative', cursive;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col md:flex-row items-start justify-start min-h-screen p-4">
+
+    <div class="main-container">
+        <div class="flex flex-col items-start w-full">
+            <div class="flex flex-wrap justify-start items-center w-full gap-4 mb-4">
+                <div class="flex items-center gap-4">
+                    <h1 class="header-title text-3xl md:text-4xl">Mappa</h1>
+                    <div id="display-info" class="display-info text-xl font-bold">
+                        <span id="selected-count">Selezionati: 0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="game-board" class="relative w-full" style="min-height: 670px;">
+            <!-- Le caselle verranno generate dinamicamente qui -->
+        </div>
+
+        <div class="flex w-full justify-end mt-4">
+            <button id="reset-button" class="button-fantasy px-4 py-2">Resetta</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h2>Sei sicuro?</h2>
+            <p>Questa azione resetterà tutti i progressi.</p>
+            <div class="modal-buttons">
+                <button id="confirm-yes" class="button-fantasy px-4 py-2">
+                    Conferma
+                </button>
+                <button id="confirm-no" class="button-fantasy px-4 py-2">
+                    Annulla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const board = document.getElementById('game-board');
+        const resetButton = document.getElementById('reset-button');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmYesButton = document.getElementById('confirm-yes');
+        const confirmNoButton = document.getElementById('confirm-no');
+        const selectedCountDisplay = document.getElementById('selected-count');
+        
+        // Posizioni iniziali dei tasselli
+        const cellPositions = {
+            1: { x: -14, y: 394 }, 2: { x: 12, y: 337 }, 3: { x: 69, y: 334 }, 4: { x: 86, y: 277 },
+            5: { x: 112, y: 222 }, 6: { x: 92, y: 166 }, 7: { x: 9, y: 221 }, 8: { x: -16, y: 272 },
+            9: { x: 22, y: 163 }, 10: { x: 59, y: 107 }, 11: { x: 117, y: 76 }, 12: { x: 210, y: 109 },
+            13: { x: 171, y: 201 }, 14: { x: 172, y: 260 }, 15: { x: 228, y: 182 }, 16: { x: 254, y: 236 },
+            17: { x: 324, y: 108 }, 18: { x: 268, y: 83 }, 19: { x: -10, y: 107 }, 20: { x: 380, y: 139 },
+            21: { x: 405, y: 196 }, 22: { x: 179, y: 376 }, 23: { x: 158, y: 318 }, 24: { x: 233, y: 413 },
+            25: { x: 288, y: 395 }, 26: { x: 339, y: 323 }, 27: { x: 310, y: 268 }, 28: { x: 430, y: 414 },
+            29: { x: 396, y: 359 }, 30: { x: 489, y: 389 }, 31: { x: 167, y: 658 }, 32: { x: 518, y: 166 },
+            33: { x: 427, y: 253 }, 34: { x: 510, y: 331 }, 35: { x: 623, y: 260 }, 36: { x: 568, y: 294 },
+            37: { x: 248, y: 339 }, 38: { x: 569, y: 357 }, 39: { x: 678, y: 221 }, 40: { x: 681, y: 329 },
+            41: { x: 628, y: 348 }, 42: { x: 791, y: 273 }, 43: { x: 736, y: 295 }, 44: { x: 197, y: 719 },
+            45: { x: 713, y: 162 }, 46: { x: 355, y: 556 }, 47: { x: 642, y: 166 }, 48: { x: 601, y: 109 },
+            49: { x: 755, y: 216 }, 50: { x: 828, y: 102 }, 
+            51: { x: 792, y: 159 }, 52: { x: 876, y: 188 }, 
+            53: { x: 884, y: 131 }, 
+            54: { x: 539, y: 223 }, 55: { x: 766, y: 351 }, 56: { x: 868, y: 245 },
+            57: { x: 840, y: 377 }, 58: { x: 784, y: 410 }, 59: { x: 484, y: 244 }, 60: { x: 893, y: 400 },
+            61: { x: 911, y: 344 }, 62: { x: 250, y: 469 }, 63: { x: 164, y: 546 }, 64: { x: 196, y: 605 },
+            65: { x: 232, y: 661 }, 66: { x: 292, y: 634 }, 67: { x: 354, y: 613 }, 68: { x: 305, y: 514 },
+            69: { x: 491, y: 110 }, 70: { x: 193, y: 489 }
+        };
+
+        const LOCAL_STORAGE_KEY = 'gameBoardSelections';
+
+        function saveSelections() {
+            const selectedCells = document.querySelectorAll('.grid-cell.selected');
+            const selectedNumbers = Array.from(selectedCells).map(cell => parseInt(cell.textContent));
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(selectedNumbers));
+        }
+
+        function loadSelections() {
+            const savedNumbers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+            if (savedNumbers) {
+                savedNumbers.forEach(number => {
+                    const cell = document.querySelector(`.grid-cell[data-number="${number}"]`);
+                    if (cell) {
+                        cell.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        function updateCount() {
+            const selectedCells = document.querySelectorAll('.grid-cell.selected');
+            selectedCountDisplay.textContent = `Selezionati: ${selectedCells.length}`;
+        }
+        
+        function createBoard() {
+            const orderedKeys = Object.keys(cellPositions).sort((a, b) => a - b);
+            
+            orderedKeys.forEach(key => {
+                const cell = document.createElement('div');
+                cell.classList.add('grid-cell', 'rounded-lg');
+                cell.textContent = key;
+                cell.dataset.number = key;
+                cell.style.left = `${cellPositions[key].x}px`;
+                cell.style.top = `${cellPositions[key].y}px`;
+
+                cell.addEventListener('click', () => {
+                    cell.classList.toggle('selected');
+                    updateCount();
+                    saveSelections();
+                });
+                
+                board.appendChild(cell);
+            });
+        }
+        
+        function resetBoard() {
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                cell.classList.remove('selected');
+            });
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            updateCount();
+            hideModal();
+        }
+
+        function showModal() {
+            confirmModal.style.display = 'flex';
+        }
+
+        function hideModal() {
+            confirmModal.style.display = 'none';
+        }
+
+        resetButton.addEventListener('click', showModal);
+        confirmYesButton.addEventListener('click', resetBoard);
+        confirmNoButton.addEventListener('click', hideModal);
+
+        window.onload = () => {
+            createBoard();
+            loadSelections();
+            updateCount();
+        };
+    </script>
+</body>
+</html>

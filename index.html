@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La tana del ragno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1f2937 0%, #0c0a09 100%);
+            background-attachment: fixed;
+            background-image: url('https://i.imgur.com/4h5vR36.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: multiply;
+        }
+        .title-font {
+            font-family: 'Bookman Old Style', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .button {
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .input-dice {
+            -moz-appearance: textfield;
+        }
+        .input-dice::-webkit-outer-spin-button,
+        .input-dice::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Stili per i pulsanti fluttuanti */
+        .fixed-btn-group-top {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 50;
+        }
+        .fixed-btn-group-bottom-left {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 50;
+        }
+        .fixed-btn-group-bottom-right {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 50;
+        }
+        .fixed-btn {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            background-color: rgba(56, 56, 56, 0.7);
+            color: rgba(209, 209, 209, 0.9);
+            border: 1px solid rgba(90, 90, 90, 0.7);
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        .fixed-btn:hover {
+            background-color: rgba(90, 90, 90, 0.8);
+            color: #ffffff;
+            border-color: rgba(209, 209, 209, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .fixed-btn:active {
+            transform: scale(0.98);
+        }
+        .popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .popup-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .popup-header {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #8B4513;
+        }
+        .popup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .popup-table th, .popup-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        .popup-table th {
+            background-color: #f2f2f2;
+            color: #555;
+            font-weight: bold;
+        }
+        .popup-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .popup-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .add-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color: 0.3s;
+        }
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+        .adjust-btn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color: 0.3s;
+        }
+        .adjust-btn:hover {
+            background-color: #da190b;
+        }
+        .checkbox-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .value-cell.hidden-value {
+            color: transparent;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+            transition: color 0.3s ease;
+        }
+        .value-cell.revealed-value {
+            color: #374151;
+            text-shadow: none;
+        }
+        #toggleAllValuesBtn {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        #toggleAllValuesBtn:hover {
+            background-color: #d1d5db;
+        }
+        .delete-btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+        .clear-heroes-btn {
+            background-color: transparent;
+            color: #b91c1c;
+            border: 2px solid #b91c1c;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .clear-heroes-btn:hover {
+            background-color: #b91c1c;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+        .modal {
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #delete-modal {
+            z-index: 2001;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            transition: all 0.2s ease-in-out;
+        }
+        .modal-btn-confirm {
+            background-color: #dc2626;
+            color: white;
+            border: 2px solid #dc2626;
+        }
+        .modal-btn-confirm:hover {
+            background-color: #b91c1c;
+            border-color: #b91c1c;
+        }
+        .modal-btn-cancel {
+            background-color: white;
+            color: #4b5563;
+            border: 2px solid #9ca3af;
+        }
+        .modal-btn-cancel:hover {
+            background-color: #f3f4f6;
+            border-color: #6b7280;
+        }
+        #map-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        #map-modal.visible {
+            display: flex;
+        }
+        #map-container {
+            position: relative;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            width: 90%;
+            height: 90%;
+            max-width: 1200px;
+            max-height: 800px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        #map-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #close-map-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+            border: none;
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color: 0.3s, transform 0.3s;
+            z-index: 2001;
+        }
+        #close-map-btn:hover {
+            background-color: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #inventory-modal .modal-content {
+             max-width: 500px;
+        }
+        #summary-modal .modal-content {
+            max-width: 500px;
+        }
+        .timer-panel {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 50;
+        }
+        .timer-panel.hidden {
+            display: none;
+        }
+        .font-medieval {
+            font-family: 'MedievalSharp', cursive;
+        }
+        .hp-preset-btn {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .hp-preset-btn:hover {
+            background-color: #fca5a5;
+            color: #7f1d1d;
+        }
+        #rules-content ol li::marker {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Pulsanti fluttuanti in alto e in basso -->
+    <div class="fixed-btn-group-top">
+        <button id="open-map-btn" class="fixed-btn">Mappa</button>
+    </div>
+    <div class="fixed-btn-group-bottom-left">
+        <button id="open-path-btn" class="fixed-btn">Path</button>
+    </div>
+    <div class="fixed-btn-group-bottom-right">
+        <button id="open-experience-btn" class="fixed-btn"><i class="fas fa-star mr-1"></i> Esperienza</button>
+        <button id="open-difficulty-btn" class="fixed-btn"><i class="fas fa-signal mr-1"></i> Difficoltà</button>
+        <button id="open-rules-btn" class="fixed-btn"><i class="fas fa-info-circle mr-1"></i> Regole</button>
+    </div>
+    
+    <!-- Tabella popup dei punteggi -->
+    <div id="path-popup" class="popup-container">
+        <h2 class="popup-header flex items-center justify-center space-x-2">
+            <span>Scoperte:</span>
+            <span id="total-score" class="ml-2">0%</span>
+            <button id="toggleAllValuesBtn" class="flex items-center justify-center p-2 rounded-full text-gray-600 hover:bg-gray-200 transition-colors duration-200">
+                <i class="fas fa-eye"></i>
+            </button>
+        </h2>
+        <table class="popup-table">
+            <thead>
+                <tr>
+                    <th>Elemento</th>
+                    <th>Valore</th>
+                    <th>Aggiungi</th>
+                </tr>
+            </thead>
+            <tbody id="popup-body">
+            </tbody>
+        </table>
+        <div id="avanzamento-progress-display" class="mt-4">
+            <label for="avanzamento-count-input" class="block text-sm font-medium text-gray-700 mb-1">Punteggio Totale (%):</label>
+            <div class="h-4 bg-gray-200 rounded-full">
+                <div id="avanzamento-progress-bar" class="h-full bg-teal-500 rounded-full transition-all duration-300 ease-out" style="width: 0%;"></div>
+            </div>
+            <p class="text-center mt-1 text-xs text-gray-500"><span id="avanzamento-value" class="font-bold">0</span> / 100</p>
+        </div>
+        <button id="close-path-popup-btn" class="mt-4 bg-gray-500 text-white font-bold py-2 px-4 rounded-full hover:bg-gray-600 transition-colors">Chiudi</button>
+    </div>
+
+    <!-- Modal di conferma per la cancellazione -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Conferma Cancellazione</h3>
+            <p id="delete-modal-text" class="text-gray-600"></p>
+            <div class="modal-buttons">
+                <button id="confirm-delete-btn" class="modal-btn modal-btn-confirm">Conferma</button>
+                <button id="cancel-delete-btn" class="modal-btn modal-btn-cancel">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per la mappa -->
+    <div id="map-modal" class="modal">
+        <div id="map-container">
+            <button id="close-map-btn"><i class="fas fa-times"></i></button>
+            <iframe id="map-iframe" src="https://percorso.tiiny.site" frameborder="0"></iframe>
+        </div>
+    </div>
+    
+    <!-- Modal per il Regolamento -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; text-align: left;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800 font-medieval">Regolamento del Gioco</h3>
+                <button id="close-rules-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="rules-content" class="max-h-[70vh] overflow-y-auto pr-4">
+                <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                    <li>Si può giocare usando da 1 a 4 personaggi.</li>
+                    <li>Ad ogni movimento su una cella viene estratta una carta e la cella viene segnata come esplorata (non è possibile estrarre più carte dalla stessa cella) e non è possibile restare fermi.</li>
+                    <li>Il personaggio si muove <strong>(M)</strong> con 1d 6.</li>
+                    <li>I punti ferita iniziali <strong>(PF)</strong> sono 30 per personaggio.</li>
+                    <li>I punti attacco iniziali <strong>(A)</strong> sono formati dal lancio di 1D6.</li>
+                    <li>Non è possibile cambiare direzione del percorso una volta effettuato il primo passo.</li>
+                    <li>Quando si pesca la carta <strong>“Procedi tranquillo”</strong> si ripristinano 2 (PF).</li>
+                    <li>Gli <strong>slot inventario</strong> sono inizialmente 5, se si portano con sé 6 elementi si dovrà calcolare un -2 al tiro di (M), se porti 7 elementi un -4 al tiro di (M), se porti 7 elementi o più non puoi più muoverti.</li>
+                    <li>Quando si arriva su una <strong>casella chiusa</strong> si pesca una carta e si perdono tutti i passi restanti.</li>
+                    <li>I <strong>combattimenti</strong> avvengono in contemporanea tirando il dado corrispondente ai punti d’attacco del personaggio, chi fa il punteggio più alto vince il combattimento e infligge all’avversario la differenza dei punti dati dal lancio del dado (devono essere conteggiano i punti bonus e i punti inventario).</li>
+                    <li>Si possono eseguire <strong>combattimenti</strong> con più personaggi in <strong>contemporanea</strong>, se il numero degli avventurieri è DUE si applica un +1 al risultato del dado, se sono > DUE si aggiunge un +2.</li>
+                    <li>Quando un giocatore pesca una carta nemico entra in combattimento e solo i PG dietro di lui possono dargli supporto mentre i PG che hanno già mosso devono attendere il round successivo.</li>
+                    <li>Per <strong>supportare</strong> il personaggio da parte dell’amico NON c’è bisogno di effettuare il tiro esatto che termina sulla casella ma basta attraversarla.</li>
+                    <li>Quando si incontra un nemico sul tragitto si può decidere di <strong>nascondersi</strong> e non combattere, per evitare di essere visti si tira un D6, se il punteggio è <u>1, 2, 3 fallisci e NON riesci a nasconderti</u> e inizia il combattimento, se il valore è <u>4, 5, 6 il personaggio riesce a nascondersi</u>.</li>
+                    <li>In caso di una <strong>fuga</strong> dal combattimento il PG se ne va dalla battaglia ma viene colpito automaticamente quindi viene lanciato un <u>D10 aggiungendo un +1</u> al totale del danno.</li>
+                    <li><strong>Ponte</strong>: quando si attraversa si lancia un D6, se il valore è <u>1, 2, 3 fallisci</u> quindi si lancia un D4 e si perde il quantitativo di PF del lancio, se è <u>4, 5, 6 passi dal ponte</u></li>
+                    <li>E' possibile rifocillarsi a una cascata curativa una volta ogni 3 turni. (guadagni alla scoperta +1 XP).</li>
+                    <li>Se viene attraversata una cella dove è posto il puntatore battaglia il giocatore non può più nascondersi ma solo fuggire se intende non combattere.</li>
+                    <li>È possibile <strong>curare</strong> un amico, per farlo basta attraversare la cella dandogli la cura.</li>
+                    <li>In caso di <strong>morte</strong> di un personaggio (si lascia il puntatore evento sulla cella) questo può essere soccorso da un amico passando per la cella e uccidendo il nemico o eseguendo una manovra riuscita di nascondersi avendo così il tempo per soccorrerlo (se non si hanno cure il personaggio morto viene ressato con 1d10 PF tranne se il compagno ha l’abilità “Resurrezione”).</li>
+                    <li>Per liberare spazio nell’inventario gli oggetti possono essere lasciati sul terreno (mettere un puntatore evento sulla cella corrispondente) e raccolti in un secondo momento.</li>
+                    <li>È possibile <strong>bloccare</strong> l’avversario tramite pergamena, in questo modo <u>il suo tiro sarà impostata a 2 e non potrà attaccare</u> (se il tiro per colpire di un avventuriero è minore di 2 automaticamente diventa un 2).</li>
+                    <li>Unisci le tre gemme per aprire la <strong>porta di gemme</strong> che ti dà un’arma 2d6 +1 in attacco (+1 XP alla scoperta).</li>
+                    <li>Usa la statuetta per aprire la <strong>porta statua</strong>, ti permette di aumentare di 3 gli slot inventario (+1 XP alla scoperta).</li>
+                    <li>Quando usi <strong>"palla di fuoco"</strong> il nemico, oltre al danno, perde 3 (PF) il primo round, 2 (PF) il secondo e 1 (PF) il terzo.</li>
+                    <li>Usa la runa della distruzione per aprirti un varco tra le macerie e fuggire dal Dudgeon.</li>
+                    <li>Quando liberi un <strong>prigioniero</strong> questo ha: <u>30 (PF), 1d6 (A) e 1D6 (M)</u>. Verrà creata per lui una nuova scheda (+1 XP alla scoperta). I prigionieri non acquisiscono XP ma in caso di scoperte/uccisioni gli XP si attribuiscono al loro scopritore.</li>
+                    <li>Unisci tutti i componenti dello <strong>Zombi</strong> (gambe, corpo e testa) per creare uno Zombi al tuo servizio. (+1 XP alla scoperta). Questo non è in grado di interagire con oggetti né di trasportare cose. Zombi <u>20(PF), 1d10 + 1 (A) e 1d6 -1 (M)</u></li>
+                    <li>Quando viene trovato l’ingresso della tana del ragno o di Idra è obbligatorio entrarci, per non andare in combattimento si può solo cercare di nascondersi o di fuggire.</li>
+                    <li>Ogni definito tempo di gioco <strong>appaiono</strong> dei nemici dal sottosuolo detti Boli (questi non sono in grado di attraversare i ponti) <br> - dopo <u>20 minuti</u>, sono <strong>uno</strong> <u>10 (PF) 1D10 (A) 1D6 (M)</u> (+1 XP alla scoperta). <br> - dopo <u>40 minuti</u>, sono <strong>due</strong> <u>15 (PF) 1D6 (A) 1D6 (M)</u> <br> - dopo <u>60 minuti</u>, sono <strong>tre</strong> <u>15 (PF) 1D6 (A) 1D6 (M)</u></li>
+                    <li>Il nascondiglio di Idra nasconde anche un’uscita dal labirinto, per usufruirne devi uccidere Idra e non avrai bisogno della carta RUNA per uscire.</li>
+                    <li>Quando attacchi il ragno o Idra non godi dei punti del supporto.</li>
+                    <li><strong>ATTENZIONE</strong>: Il ragno al 2 turno di gioco sparisce e spawna 3 ragnetti (qui si gode dei punti supporti). Alla loro morte torna la madre e continua il combattimento per un altro round (non si gode dei punti supporto) poi sparisce ancora e spawna 3 ragnetti (qui si gode dei punti supporti). Alla loro morte torna la madre e termina il combattimento (non si gode dei punti supporto). La morte del ragno da +2 (XP) a tutti i PG.</li>
+                    <li>Dopo la morte del ragno puoi scoprire una cella anche se il tiro del dado è superiore al tiro necessario per fermartici sopra.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal per Difficoltà -->
+    <div id="difficulty-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; text-align: left;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800 font-medieval">Statistiche Difficoltà</h3>
+                <button id="close-difficulty-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="mb-4">
+                <label for="difficulty-select" class="block text-sm font-medium text-gray-700 mb-2">Seleziona Difficoltà:</label>
+                <select id="difficulty-select" class="w-full p-2 border rounded-md bg-gray-50">
+                    <option value="1">Difficoltà 1</option>
+                    <option value="2">Difficoltà 2</option>
+                    <option value="3">Difficoltà 3</option>
+                    <option value="4">Difficoltà 4</option>
+                </select>
+            </div>
+            <div id="difficulty-content" class="max-h-[60vh] overflow-y-auto pr-4">
+                <!-- Content will be generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per Esperienza -->
+    <div id="experience-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; text-align: left;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800 font-medieval">Esperienza e Abilità</h3>
+                <button id="close-experience-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="max-h-[70vh] overflow-y-auto pr-4">
+                <div class="mb-6 pb-4 border-b">
+                    <h4 class="text-lg font-bold mb-2">Attribuzione punti XP</h4>
+                    <p class="mb-2">Per ogni uccisione effettuata dal tuo PG gli viene attribuito 1 punto esperienza (XP). Al raggiungimento del valore del prezzo in (XP) della caratteristica puoi guadagnarla.</p>
+                    <p class="font-semibold mb-1">Altri punti XP guadagnabili:</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Morte del Ragno: <strong>+2 XP</strong> a tutti i PG</li>
+                        <li>Morte di Idra: <strong>+2 XP</strong> a tutti i PG</li>
+                        <li>Morte primo bolo: <strong>+2 XP</strong></li>
+                        <li>Creazione Zombi: <strong>+1 XP</strong></li>
+                        <li>Scoperta prigioniero 1: <strong>+1 XP</strong></li>
+                        <li>Scoperta prigioniero 2: <strong>+1XP</strong></li>
+                        <li>Scoperta porta statua: <strong>+1 XP</strong></li>
+                        <li>Scoperta porta gemme: <strong>+1 XP</strong></li>
+                        <li>Scoperta cascata: <strong>+1 XP</strong></li>
+                    </ul>
+                </div>
+                <div class="mb-4">
+                    <label for="experience-select" class="block text-sm font-medium text-gray-700 mb-2">Seleziona XP in possesso:</label>
+                    <select id="experience-select" class="w-full p-2 border rounded-md bg-gray-50">
+                        <option value="3">3 XP</option>
+                        <option value="4">4 XP</option>
+                        <option value="5">5 XP</option>
+                    </select>
+                </div>
+                <div id="experience-content">
+                    <!-- Content will be generated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per Aggiungere Eroe in Battaglia -->
+    <div id="add-hero-to-battle-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Aggiungi Eroe alla Battaglia</h3>
+            <div class="text-left">
+                <label for="add-hero-select" class="block text-sm font-medium text-gray-700 mb-2">Seleziona Eroe da Aggiungere:</label>
+                <select id="add-hero-select" class="w-full p-2 border rounded-md bg-gray-50">
+                    <!-- Options will be populated by JS -->
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button id="confirm-add-hero-btn" class="modal-btn modal-btn-confirm">Aggiungi</button>
+                <button id="cancel-add-hero-btn" class="modal-btn modal-btn-cancel">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per l'inventario -->
+    <div id="inventory-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Inventario di <span id="inventory-hero-name"></span></h3>
+            <div id="inventory-items-container" class="mb-4 max-h-60 overflow-y-auto"></div>
+            <div class="flex flex-col space-y-4">
+                <input type="text" id="new-item-name" placeholder="Nome oggetto" class="p-2 border rounded-md">
+                <div class="flex items-center space-x-2">
+                    <label for="new-item-bonus" class="text-gray-700 font-medium">Bonus:</label>
+                    <input type="number" id="new-item-bonus" placeholder="Bonus al dado" min="0" value="0" class="p-2 border rounded-md flex-grow">
+                </div>
+                <button id="add-item-btn" class="bg-blue-500 text-white font-bold py-2 rounded-lg hover:bg-blue-600 transition-colors">Aggiungi Oggetto</button>
+            </div>
+            <button id="close-inventory-btn" class="mt-4 bg-gray-500 text-white font-bold py-2 px-4 rounded-full hover:bg-gray-600 transition-colors">Chiudi</button>
+        </div>
+    </div>
+
+    <!-- Modal per il riepilogo dei PG -->
+    <div id="summary-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Gestione Eroi Salvati</h3>
+            <div id="summary-content" class="text-left max-h-80 overflow-y-auto">
+                <!-- Content will be generated by JS -->
+            </div>
+            <div id="add-hero-form" class="mt-4 pt-4 border-t">
+                 <h4 class="text-lg font-semibold text-gray-800 mb-2">Crea Nuovo Eroe</h4>
+                 <div class="flex flex-col space-y-2">
+                    <input type="text" id="new-hero-name-summary" placeholder="Nome Eroe" class="p-2 border rounded-md">
+                    <input type="number" id="new-hero-hp-summary" placeholder="PF Iniziali" value="30" min="1" class="p-2 border rounded-md">
+                    <button onclick="addNewHeroFromSummary()" class="bg-blue-500 text-white font-bold py-2 rounded-lg hover:bg-blue-600 transition-colors">Crea Eroe</button>
+                 </div>
+            </div>
+            <button id="close-summary-btn" class="mt-6 bg-gray-500 text-white font-bold py-2 px-4 rounded-full hover:bg-gray-600 transition-colors">Chiudi</button>
+        </div>
+    </div>
+
+    <div class="timer-panel">
+        <div class="flex items-center gap-2">
+            <button id="toggle-timer-btn" class="bg-transparent text-cyan-400 rounded-full p-1 hover:text-cyan-200 transition-colors duration-200">
+                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            </button>
+            <div id="timerContainer" class="bg-transparent backdrop-blur-sm p-1 rounded-lg shadow-lg">
+                <div class="flex items-center space-x-1 text-white">
+                    <input type="number" id="countdownInput" min="1" value="20" class="w-10 bg-transparent text-white text-center rounded-md p-0.5 border border-gray-400 focus:border-white focus:outline-none text-sm">
+                    <span class="text-xs">min</span>
+                    <button id="startCountdownBtn" class="bg-transparent text-white rounded-full p-1 hover:bg-white/20 transition-colors duration-200 text-sm">▶</button>
+                    <button id="stopCountdownBtn" class="bg-transparent text-white rounded-full p-1 hover:bg-white/20 transition-colors duration-200 hidden text-sm">■</button>
+                </div>
+                <div id="countdownDisplay" class="text-lg font-bold text-center mt-1 text-white hidden"></div>
+            </div>
+        </div>
+        <div id="randomNumberDisplay" class="text-2xl font-bold text-center text-yellow-400 hidden mt-1"></div>
+    </div>
+
+    <div class="card w-full max-w-2xl mx-auto text-center">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 title-font"><i>La</i> TANA <i>del</i> RAGNO</h1>
+        </div>
+
+        <!-- NEW BATTLE LIST SECTION -->
+        <div id="battles-section">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Battaglie in Corso</h2>
+            <div id="battles-list-container" class="space-y-3 mb-6 max-h-60 overflow-y-auto">
+                <!-- Battle list will be rendered here -->
+            </div>
+            <div class="flex justify-center items-center gap-4 pt-2">
+                 <button onclick="showNewBattleSetup()" class="button w-auto bg-blue-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-blue-600">
+                    Nuova Battaglia
+                </button>
+                <button id="open-summary-btn" class="text-sm text-gray-600 hover:text-gray-900 font-semibold flex items-center gap-2">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Gestisci Eroi</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="setup-section" class="hidden space-y-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Crea Nuova Battaglia</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                <div class="w-full">
+                    <label for="numPlayers" class="block text-lg font-medium text-blue-700 mb-2">Numero di Eroi:</label>
+                    <div class="flex items-center justify-center">
+                        <button onclick="changeCounter('numPlayers', -1)" class="button bg-blue-500 text-white rounded-l-full px-4 py-2 font-bold text-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">-</button>
+                        <input type="text" id="numPlayers" value="1" readonly class="w-20 text-center text-xl font-bold text-blue-600 bg-white border-t border-b border-blue-300 p-3">
+                        <button onclick="changeCounter('numPlayers', 1)" class="button bg-blue-500 text-white rounded-r-full px-4 py-2 font-bold text-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">+</button>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <label for="playerBonusPoints" class="block text-lg font-medium text-blue-700 mb-2">Bonus al Tiro Eroi:</label>
+                    <input type="number" id="playerBonusPoints" min="0" value="0" class="w-1/2 mx-auto text-center text-xl font-bold text-blue-600 bg-white border border-blue-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                <div class="w-full">
+                    <label for="numEnemies" class="block text-lg font-medium text-red-700 mb-2">Numero di Nemici:</label>
+                    <div class="flex items-center justify-center">
+                        <button onclick="changeCounter('numEnemies', -1)" class="button bg-red-500 text-white rounded-l-full px-4 py-2 font-bold text-xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">-</button>
+                        <input type="text" id="numEnemies" value="1" readonly class="w-20 text-center text-xl font-bold text-red-600 bg-white border-t border-b border-red-300 p-3">
+                        <button onclick="changeCounter('numEnemies', 1)" class="button bg-red-500 text-white rounded-r-full px-4 py-2 font-bold text-xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">+</button>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <label for="enemyBonusPoints" class="block text-lg font-medium text-red-700 mb-2">Bonus al Tiro Nemici:</label>
+                    <input type="number" id="enemyBonusPoints" min="0" value="0" class="w-1/2 mx-auto text-center text-xl font-bold text-red-600 bg-white border border-red-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200">
+                </div>
+            </div>
+             <div class="flex flex-wrap justify-center items-center gap-3 pt-4">
+                <button onclick="goToDetailedSetup()"
+                        class="button font-medieval text-amber-100 bg-green-800 hover:bg-green-700 border-2 border-green-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Avanti
+                </button>
+                <button onclick="backToBattlesList()"
+                        class="button font-medieval text-amber-100 bg-gray-700 hover:bg-gray-600 border-2 border-gray-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Annulla
+                </button>
+            </div>
+        </div>
+
+        <div id="detailed-setup-section" class="hidden space-y-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Setup Dettagliato</h2>
+
+            <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">Eroi</h3>
+                <div id="eroe-inputs-container" class="space-y-4">
+                </div>
+            </div>
+
+            <div class="bg-red-50 p-6 rounded-lg mb-6">
+                <h3 class="text-xl font-bold text-red-800 mb-4">Nemici</h3>
+                <div class="flex flex-wrap justify-center gap-2 mb-4">
+                    <button onclick="setAllEnemyHP(5)" class="hp-preset-btn">5</button>
+                    <button onclick="setAllEnemyHP(6)" class="hp-preset-btn">6</button>
+                    <button onclick="setAllEnemyHP(8)" class="hp-preset-btn">8</button>
+                    <button onclick="setAllEnemyHP(10)" class="hp-preset-btn">10</button>
+                    <button onclick="setAllEnemyHP(15)" class="hp-preset-btn">15</button>
+                    <button onclick="setAllEnemyHP(20)" class="hp-preset-btn">20</button>
+                    <button onclick="setAllEnemyHP(30)" class="hp-preset-btn">30</button>
+                    <button onclick="setAllEnemyHP(35)" class="hp-preset-btn">35</button>
+                    <button onclick="setAllEnemyHP(40)" class="hp-preset-btn">40</button>
+                    <button onclick="setAllEnemyHP(45)" class="hp-preset-btn">45</button>
+                </div>
+                <div id="enemy-inputs-container" class="space-y-4">
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label for="battleNameInput" class="block text-lg font-medium text-gray-700 mb-2">Nome della Battaglia (opzionale):</label>
+                <input type="text" id="battleNameInput" placeholder="Es: Scontro nella Cripta" class="w-full text-center text-xl font-bold text-gray-600 bg-white border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+            </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-3">
+                <button onclick="startGame()"
+                        class="button font-medieval text-amber-100 bg-green-800 hover:bg-green-700 border-2 border-green-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Avvia Battaglia
+                </button>
+                <button onclick="backToNewBattleSetup()"
+                        class="button font-medieval text-amber-100 bg-gray-700 hover:bg-gray-600 border-2 border-gray-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Torna Indietro
+                </button>
+            </div>
+        </div>
+
+        <div id="game-section" class="hidden">
+            <h2 id="current-battle-name" class="text-2xl font-bold text-gray-800 mb-4"></h2>
+            
+            <div id="dice-inputs-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-3">
+                <button onclick="calculate()"
+                        class="button font-medieval text-amber-100 bg-green-800 hover:bg-green-700 border-2 border-green-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Calcola Risultati
+                </button>
+                <button onclick="openAddHeroToBattleModal()"
+                        class="button font-medieval text-amber-100 bg-blue-800 hover:bg-blue-700 border-2 border-blue-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Aggiungi Eroe
+                </button>
+                <button onclick="backToBattlesList()"
+                        class="button font-medieval text-amber-100 bg-amber-800 hover:bg-amber-700 border-2 border-amber-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Lista Battaglie
+                </button>
+                <button onclick="endBattle()"
+                        class="button font-medieval text-amber-100 bg-red-800 hover:bg-red-700 border-2 border-red-900 rounded-md py-2 px-5 text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                    Battaglia Terminata
+                </button>
+            </div>
+
+            <div class="mt-8 text-left">
+                <div class="bg-gray-100 p-6 rounded-lg overflow-x-auto">
+                    <p class="text-lg font-semibold text-gray-700 mb-2">Risultato della Battaglia:</p>
+                    <div id="battleLog" class="text-sm font-mono text-gray-900 mb-4 max-h-96 overflow-y-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            activeBattleId: null,
+            battles: [],
+            inventories: {},
+        };
+
+        // Temporary state for new battle creation
+        let newBattleSetup = {
+            numPlayers: 1,
+            numEnemies: 1,
+            playerBonus: 0,
+            enemyBonus: 0
+        };
+
+        let countdownInterval;
+        let timerVisible = true;
+        let currentHeroForInventory = null;
+        let totalScore = 0;
+        let valuesVisible = false;
+        const maxTotalScore = 100;
+
+        // DOM Elements
+        const countdownInput = document.getElementById('countdownInput');
+        const startCountdownBtn = document.getElementById('startCountdownBtn');
+        const stopCountdownBtn = document.getElementById('stopCountdownBtn');
+        const countdownDisplay = document.getElementById('countdownDisplay');
+        const randomNumberDisplay = document.getElementById('randomNumberDisplay');
+        const timerContainer = document.getElementById('timerContainer');
+        const toggleTimerBtn = document.getElementById('toggle-timer-btn');
+        const eyeIcon = document.getElementById('eye-icon');
+        const openPathBtn = document.getElementById('open-path-btn');
+        const openMapBtn = document.getElementById('open-map-btn');
+        const pathPopup = document.getElementById('path-popup');
+        const closePathPopupBtn = document.getElementById('close-path-popup-btn');
+        const toggleAllValuesBtn = document.getElementById('toggleAllValuesBtn');
+        const popupBody = document.getElementById('popup-body');
+        const totalScoreSpan = document.getElementById('total-score');
+        const avanzamentoProgressBar = document.getElementById('avanzamento-progress-bar');
+        const avanzamentoValueSpan = document.getElementById('avanzamento-value');
+        const mapModal = document.getElementById('map-modal');
+        const closeMapBtn = document.getElementById('close-map-btn');
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const deleteModalText = document.getElementById('delete-modal-text');
+        const inventoryModal = document.getElementById('inventory-modal');
+        const closeInventoryBtn = document.getElementById('close-inventory-btn');
+        const inventoryHeroName = document.getElementById('inventory-hero-name');
+        const inventoryItemsContainer = document.getElementById('inventory-items-container');
+        const newItemNameInput = document.getElementById('new-item-name');
+        const newItemBonusInput = document.getElementById('new-item-bonus');
+        const addItemBtn = document.getElementById('add-item-btn');
+        const summaryModal = document.getElementById('summary-modal');
+        const openSummaryBtn = document.getElementById('open-summary-btn');
+        const closeSummaryBtn = document.getElementById('close-summary-btn');
+        const summaryContent = document.getElementById('summary-content');
+        const openRulesBtn = document.getElementById('open-rules-btn');
+        const rulesModal = document.getElementById('rules-modal');
+        const closeRulesBtn = document.getElementById('close-rules-btn');
+        const openDifficultyBtn = document.getElementById('open-difficulty-btn');
+        const difficultyModal = document.getElementById('difficulty-modal');
+        const closeDifficultyBtn = document.getElementById('close-difficulty-btn');
+        const difficultySelect = document.getElementById('difficulty-select');
+        const difficultyContent = document.getElementById('difficulty-content');
+        const openExperienceBtn = document.getElementById('open-experience-btn');
+        const experienceModal = document.getElementById('experience-modal');
+        const closeExperienceBtn = document.getElementById('close-experience-btn');
+        const experienceSelect = document.getElementById('experience-select');
+        const experienceContent = document.getElementById('experience-content');
+        const addHeroToBattleModal = document.getElementById('add-hero-to-battle-modal');
+        const confirmAddHeroBtn = document.getElementById('confirm-add-hero-btn');
+        const cancelAddHeroBtn = document.getElementById('cancel-add-hero-btn');
+        const addHeroSelect = document.getElementById('add-hero-select');
+
+
+        const discoveryItems = {
+            'Avanzamento': 1, 'ragno': 9, 'idra': 5, 'zombi': 4, 'prigioniero1': 2,
+            'prigioniero2': 2, 'runa': 3, 'porta statua': 2, 'porta gemme': 3
+        };
+
+        const difficultyData = {
+            '1': {
+                title: 'Difficoltà: 1',
+                creatures: [
+                    { name: 'Ragno', pf: '30', a: '1D10' }, { name: 'Ragnetto1', pf: '6', a: '1D6' },
+                    { name: 'Ragnetto2', pf: '6', a: '1D6' }, { name: 'Ragnetto3', pf: '6', a: '1D6' },
+                    { name: 'Idra', pf: '30', a: '1D10' }, { name: 'Nemici 1', pf: '5', a: '1D6' },
+                    { name: 'Nemici 2', pf: '5', a: '1D6' }, { name: 'Nemici 3', pf: '5', a: '1D6' },
+                    { name: 'Nemici 4', pf: '5', a: '1D6' }, { name: 'Nemici 5', pf: '5', a: '1D6' },
+                    { name: 'Nemici 6', pf: '5', a: '1D6' }, { name: 'Nemico 7', pf: '8', a: '1D6' },
+                    { name: 'Nemico 8', pf: '8', a: '1D6' }, { name: 'Nemico 9', pf: '6', a: '1D6' },
+                    { name: 'Nemico 10', pf: '6', a: '1D6' }, { name: 'Nemico 11', pf: '6', a: '1D6' },
+                    { name: 'Nemico 12', pf: '6', a: '1D6' }, { name: 'Erba 1', pf: '1D4', a: '+1' },
+                    { name: 'Erba 2', pf: '1D6', a: '+4' }, { name: 'Erba 3', pf: '1D10', a: '+5' },
+                    { name: 'Erba 4', pf: '+20', a: '' }, { name: 'Bacca 1', pf: '+2 PF', a: '' },
+                    { name: 'Bacca 2', pf: '+4 PF', a: '' }, { name: 'Bacca 3', pf: '+6 PF', a: '' },
+                    { name: 'Bacca 4', pf: '+8 PF', a: '' }, { name: 'Bacca 5', pf: '+10 PF', a: '' },
+                    { name: 'Bacca 6', pf: '+15 PF', a: '' }, { name: 'Cascata curativa', pf: '+10 PF', a: '' },
+                    { name: 'Pozione di vita', pf: '+20 PF', a: '' },
+                ]
+            }, '2': {
+                title: 'Difficoltà: 2',
+                creatures: [
+                    { name: 'Ragno', pf: '35', a: '1D10' }, { name: 'Ragnetto1', pf: '8', a: '1D6' },
+                    { name: 'Ragnetto2', pf: '8', a: '1D6' }, { name: 'Ragnetto3', pf: '8', a: '1D6' },
+                    { name: 'Idra', pf: '35', a: '1D10' }, { name: 'Nemici 1', pf: '6', a: '1D6' },
+                    { name: 'Nemici 2', pf: '6', a: '1D6' }, { name: 'Nemici 3', pf: '6', a: '1D6' },
+                    { name: 'Nemici 4', pf: '6', a: '1D6' }, { name: 'Nemici 5', pf: '6', a: '1D6' },
+                    { name: 'Nemici 6', pf: '6', a: '1D6' }, { name: 'Nemico 7', pf: '8', a: '1D6' },
+                    { name: 'Nemico 8', pf: '8', a: '1D6' }, { name: 'Nemico 9', pf: '8', a: '1D6' },
+                    { name: 'Nemico 10', pf: '8', a: '1D6' }, { name: 'Nemico 11', pf: '8', a: '1D6' },
+                    { name: 'Nemico 12', pf: '8', a: '1D6' }, { name: 'Erba 1', pf: '1D4', a: '+1' },
+                    { name: 'Erba 2', pf: '1D6', a: '+4' }, { name: 'Erba 3', pf: '1D10', a: '+5' },
+                    { name: 'Erba 4', pf: '+15', a: '' }, { name: 'Bacca 1', pf: '+2 PF', a: '' },
+                    { name: 'Bacca 2', pf: '+4 PF', a: '' }, { name: 'Bacca 3', pf: '+6 PF', a: '' },
+                    { name: 'Bacca 4', pf: '+8 PF', a: '' }, { name: 'Bacca 5', pf: '+10 PF', a: '' },
+                    { name: 'Bacca 6', pf: '+12 PF', a: '' }, { name: 'Cascata curativa', pf: '+8 PF', a: '' },
+                    { name: 'Pozione di vita', pf: '+15 PF', a: '' },
+                ]
+            }, '3': {
+                title: 'Difficoltà: 3',
+                creatures: [
+                    { name: 'Ragno', pf: '40', a: '1D10' }, { name: 'Ragnetto1', pf: '8', a: '1D6' },
+                    { name: 'Ragnetto2', pf: '8', a: '1D6' }, { name: 'Ragnetto3', pf: '8', a: '1D6' },
+                    { name: 'Idra', pf: '40', a: '1D10' }, { name: 'Nemici 1', pf: '8', a: '1D6' },
+                    { name: 'Nemici 2', pf: '8', a: '1D6' }, { name: 'Nemici 3', pf: '8', a: '1D6' },
+                    { name: 'Nemici 4', pf: '8', a: '1D6' }, { name: 'Nemici 5', pf: '8', a: '1D6' },
+                    { name: 'Nemici 6', pf: '8', a: '1D6' }, { name: 'Nemico 7', pf: '10', a: '1D6' },
+                    { name: 'Nemico 8', pf: '10', a: '1D6' }, { name: 'Nemico 9', pf: '8', a: '1D6' },
+                    { name: 'Nemico 10', pf: '8', a: '1D6' }, { name: 'Nemico 11', pf: '8', a: '1D6' },
+                    { name: 'Nemico 12', pf: '8', a: '1D6' }, { name: 'Erba 1', pf: '1D4', a: '+1' },
+                    { name: 'Erba 2', pf: '1D6', a: '+2' }, { name: 'Erba 3', pf: '1D10', a: '+2' },
+                    { name: 'Erba 4', pf: '+10', a: '' }, { name: 'Bacca 1', pf: '+2 PF', a: '' },
+                    { name: 'Bacca 2', pf: '+2 PF', a: '' }, { name: 'Bacca 3', pf: '+4 PF', a: '' },
+                    { name: 'Bacca 4', pf: '+6 PF', a: '' }, { name: 'Bacca 5', pf: '+8 PF', a: '' },
+                    { name: 'Bacca 6', pf: '+10 PF', a: '' }, { name: 'Cascata curativa', pf: '+6 PF', a: '' },
+                    { name: 'Pozione di vita', pf: '+10 PF', a: '' },
+                ]
+            }, '4': {
+                title: 'Difficoltà: 4',
+                creatures: [
+                    { name: 'Ragno', pf: '45', a: '1D10' }, { name: 'Ragnetto1', pf: '10', a: '1D6' },
+                    { name: 'Ragnetto2', pf: '10', a: '1D6' }, { name: 'Ragnetto3', pf: '10', a: '1D6' },
+                    { name: 'Idra', pf: '45', a: '1D10' }, { name: 'Nemici 1', pf: '10', a: '1D6' },
+                    { name: 'Nemici 2', pf: '10', a: '1D6' }, { name: 'Nemici 3', pf: '10', a: '1D6' },
+                    { name: 'Nemici 4', pf: '10', a: '1D6' }, { name: 'Nemici 5', pf: '10', a: '1D6' },
+                    { name: 'Nemici 6', pf: '10', a: '1D6' }, { name: 'Nemico 7', pf: '20', a: '1D6' },
+                    { name: 'Nemico 8', pf: '20', a: '1D10' }, { name: 'Nemico 9', pf: '15', a: '1D10' },
+                    { name: 'Nemico 10', pf: '15', a: '1D10' }, { name: 'Nemico 11', pf: '15', a: '1D10' },
+                    { name: 'Nemico 12', pf: '15', a: '1D6' }, { name: 'Erba 1', pf: '1D4', a: '' },
+                    { name: 'Erba 2', pf: '1D6', a: '' }, { name: 'Erba 3', pf: '1D10', a: '' },
+                    { name: 'Erba 4', pf: '+10', a: '' }, { name: 'Bacca 1', pf: '+2 PF', a: '' },
+                    { name: 'Bacca 2', pf: '+2 PF', a: '' }, { name: 'Bacca 3', pf: '+4 PF', a: '' },
+                    { name: 'Bacca 4', pf: '+6 PF', a: '' }, { name: 'Bacca 5', pf: '+8 PF', a: '' },
+                    { name: 'Bacca 6', pf: '+10 PF', a: '' }, { name: 'Cascata curativa', pf: '+5 PF', a: '' },
+                    { name: 'Pozione di vita', pf: '+5 PF', a: '' },
+                ]
+            }
+        };
+        const experienceData = {
+            '3': {
+                title: 'Abilità (3 XP)',
+                abilities: [
+                    "<strong>Velocità:</strong> + 1 (M);",
+                    "<strong>Lancio:</strong> Lanci un oggetto dal tuo zaino a un compagno a 6 celle di distanza se non ci sono curve sulla traiettoria;",
+                    "<strong>Forza:</strong> +1 slot oggetto aggiuntivo;",
+                    "<strong>Coriaceo:</strong> aumenti i PF massimi a 40;",
+                    "<strong>Cure:</strong> tutte le cure ti danno, oltre al loro potere, anche un +5 (PF);",
+                    "<strong>Resurrezione:</strong> se un compagno muore puoi farlo rinascere con metà dei suoi PF;"
+                ]
+            },
+            '4': {
+                title: 'Abilità (4 XP)',
+                abilities: [
+                    "<strong>Attacco:</strong> +1 contro i boli, il ragno o Idra;",
+                    "<strong>Nascondersi:</strong> riesci a nascondersi dai nemici anche se fai un 3 quindi 3 - 4 - 5 – 6;",
+                    "<strong>Fuga:</strong> quando fuggi da un combattimento lanci 1D6 +1 di danno anziché un 1D10 +1;",
+                    "<strong>Medico:</strong> Quando superi un compagno puoi curarlo di un 1D10 (PF) una volta ogni 3 round;",
+                    "<strong>Equilibrista:</strong> I ponti non ti danno penalità;"
+                ]
+            },
+            '5': {
+                title: 'Abilità (5 XP)',
+                abilities: [
+                    "<strong>Astuzia:</strong> possibilità di ritirare un dado con valore 1 una volta ogni combattimento;",
+                    "<strong>Solitario:</strong> hai un bonus di +1 contro i nemici anche se sei solo in combattimento;",
+                    "<strong>Opportunità:</strong> se in combattimento ottieni il valore massimo dei dadi (6 o 10) puoi tirare un D4 e aggiungere il suo valore all’attacco una volta ogni combattimento;"
+                ]
+            }
+        };
+
+
+        // Event Listeners
+        openMapBtn.addEventListener('click', () => mapModal.classList.add('visible'));
+        closeMapBtn.addEventListener('click', () => mapModal.classList.remove('visible'));
+        openRulesBtn.addEventListener('click', () => rulesModal.classList.add('visible'));
+        closeRulesBtn.addEventListener('click', () => rulesModal.classList.remove('visible'));
+        openDifficultyBtn.addEventListener('click', () => {
+            renderDifficultyTable(difficultySelect.value);
+            difficultyModal.classList.add('visible');
+        });
+        closeDifficultyBtn.addEventListener('click', () => difficultyModal.classList.remove('visible'));
+        difficultySelect.addEventListener('change', (e) => renderDifficultyTable(e.target.value));
+        openExperienceBtn.addEventListener('click', () => {
+            renderExperienceAbilities(experienceSelect.value);
+            experienceModal.classList.add('visible');
+        });
+        closeExperienceBtn.addEventListener('click', () => experienceModal.classList.remove('visible'));
+        experienceSelect.addEventListener('change', (e) => renderExperienceAbilities(e.target.value));
+        confirmDeleteBtn.addEventListener('click', () => {
+            const idToDelete = confirmDeleteBtn.dataset.id;
+            const type = confirmDeleteBtn.dataset.type;
+            if (type === 'battle') {
+                 deleteBattle(idToDelete);
+            } else if (type === 'hero') {
+                deleteHero(idToDelete);
+            }
+            deleteModal.classList.remove('visible');
+        });
+        cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.remove('visible'));
+        closeInventoryBtn.addEventListener('click', () => inventoryModal.classList.remove('visible'));
+        openSummaryBtn.addEventListener('click', showSummary);
+        closeSummaryBtn.addEventListener('click', () => summaryModal.classList.remove('visible'));
+        addItemBtn.addEventListener('click', () => {
+            if (currentHeroForInventory) addItemToInventory();
+        });
+        openPathBtn.addEventListener('click', () => {
+            populatePathTable();
+            pathPopup.classList.add('visible');
+        });
+        closePathPopupBtn.addEventListener('click', () => pathPopup.classList.remove('visible'));
+        toggleAllValuesBtn.addEventListener('click', () => toggleAllValuesVisibility());
+        startCountdownBtn.addEventListener('click', startCountdown);
+        stopCountdownBtn.addEventListener('click', stopCountdown);
+        toggleTimerBtn.addEventListener('click', () => {
+            timerVisible = !timerVisible;
+            timerContainer.classList.toggle('hidden', !timerVisible);
+            if (!timerVisible) randomNumberDisplay.classList.add('hidden');
+            eyeIcon.innerHTML = timerVisible 
+                ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`
+                : `<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 .847 0 1.673.123 2.458.355m7.124 7.124A10.034 10.034 0 0112 19c-1.393 0-2.734-.28-3.968-.788M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2 2l20 20" />`;
+        });
+        confirmAddHeroBtn.addEventListener('click', confirmAddHeroToBattle);
+        cancelAddHeroBtn.addEventListener('click', () => addHeroToBattleModal.classList.remove('visible'));
+        
+        window.onload = () => {
+            loadGameState();
+            loadHeroData(); // Load heroes separately
+            renderBattlesList();
+        };
+
+        function openAddHeroToBattleModal() {
+            const battle = gameState.battles.find(b => b.id === gameState.activeBattleId);
+            if (!battle) return;
+
+            const allHeroes = loadHeroData();
+            const heroesInBattle = battle.heroNames;
+
+            const availableHeroes = allHeroes.filter(hero => !heroesInBattle.includes(hero.name));
+            
+            addHeroSelect.innerHTML = ''; // Clear previous options
+
+            if (availableHeroes.length === 0) {
+                addHeroSelect.innerHTML = '<option value="">Nessun eroe disponibile</option>';
+                document.getElementById('confirm-add-hero-btn').disabled = true;
+            } else {
+                availableHeroes.forEach(hero => {
+                    const option = document.createElement('option');
+                    option.value = hero.name;
+                    option.textContent = `${hero.name} (HP: ${hero.hp})`;
+                    addHeroSelect.appendChild(option);
+                });
+                document.getElementById('confirm-add-hero-btn').disabled = false;
+            }
+
+            addHeroToBattleModal.classList.add('visible');
+        }
+
+        function confirmAddHeroToBattle() {
+            const selectedHeroName = addHeroSelect.value;
+            if (!selectedHeroName) return;
+
+            const battle = gameState.battles.find(b => b.id === gameState.activeBattleId);
+            if (!battle) return;
+
+            const allHeroes = loadHeroData();
+            const heroToAdd = allHeroes.find(h => h.name === selectedHeroName);
+            if (!heroToAdd) return;
+
+            // Add hero to battle
+            battle.heroNames.push(heroToAdd.name);
+            battle.healthPoints[heroToAdd.name] = heroToAdd.hp;
+            
+            saveGameState();
+            
+            // Rerender the game section to include the new hero
+            renderGameSection(battle);
+            
+            addHeroToBattleModal.classList.remove('visible');
+        }
+
+        function renderExperienceAbilities(level) {
+            const data = experienceData[level];
+            if (!data) {
+                experienceContent.innerHTML = '';
+                return;
+            }
+
+            let listHTML = `<h4 class="text-lg font-bold mb-3">${data.title}</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700">`;
+            data.abilities.forEach(ability => {
+                listHTML += `<li>${ability}</li>`;
+            });
+            listHTML += `</ol>`;
+            experienceContent.innerHTML = listHTML;
+        }
+
+        function renderDifficultyTable(level) {
+            const data = difficultyData[level];
+            if (!data) {
+                difficultyContent.innerHTML = '<p>Dati non trovati per questa difficoltà.</p>';
+                return;
+            }
+
+            let tableHTML = `<h4 class="text-lg font-bold mb-3">${data.title}</h4>
+            <table class="popup-table w-full">
+                <thead>
+                    <tr>
+                        <th>Creatura</th>
+                        <th>(PF)</th>
+                        <th>(A)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.creatures.forEach(creature => {
+                tableHTML += `
+                    <tr>
+                        <td>${creature.name}</td>
+                        <td>${creature.pf}</td>
+                        <td>${creature.a}</td>
+                    </tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            difficultyContent.innerHTML = tableHTML;
+        }
+
+        function switchView(viewId) {
+            ['battles-section', 'setup-section', 'detailed-setup-section', 'game-section'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function populatePathTable() {
+            popupBody.innerHTML = '';
+            const avanzamentoRow = document.createElement('tr');
+            avanzamentoRow.innerHTML = `
+                <td>Avanzamento</td>
+                <td class="value-cell-toggleable value-cell"></td>
+                <td class="checkbox-cell">
+                    <input type="number" id="avanzamento-count-input" value="0" class="w-16 text-center border rounded-md" min="0" max="${maxTotalScore}">
+                </td>`;
+            popupBody.appendChild(avanzamentoRow);
+            for (const item in discoveryItems) {
+                if (item === 'Avanzamento') continue;
+                const row = document.createElement('tr');
+                const itemId = item.replace(/\s/g, '');
+                row.innerHTML = `
+                    <td>${item}</td>
+                    <td class="value-cell-toggleable value-cell hidden-value">${discoveryItems[item]}</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" data-item="${item}" id="checkbox-${itemId}" class="h-5 w-5 rounded-md text-green-600 focus:ring-green-500">
+                    </td>`;
+                popupBody.appendChild(row);
+            }
+            document.getElementById('avanzamento-count-input').addEventListener('input', updateTotalScoreDisplay);
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.addEventListener('change', updateTotalScoreDisplay));
+            updateTotalScoreDisplay();
+            toggleAllValuesVisibility(true);
+        }
+
+        function toggleAllValuesVisibility(initial = false) {
+            if (!initial) valuesVisible = !valuesVisible;
+            document.querySelectorAll('.value-cell-toggleable').forEach(cell => {
+                cell.classList.toggle('hidden-value', !valuesVisible);
+                cell.classList.toggle('revealed-value', valuesVisible);
+            });
+            const eyeIcon = toggleAllValuesBtn.querySelector('i');
+            if (eyeIcon) {
+                eyeIcon.classList.toggle('fa-eye', !valuesVisible);
+                eyeIcon.classList.toggle('fa-eye-slash', valuesVisible);
+            }
+        }
+
+        function updateTotalScoreDisplay() {
+            const avanzamentoInput = document.getElementById('avanzamento-count-input');
+            let calculatedScore = 0;
+            let avanzamentoValue = avanzamentoInput ? parseInt(avanzamentoInput.value) || 0 : 0;
+            if (avanzamentoValue > maxTotalScore) avanzamentoValue = maxTotalScore;
+            if (avanzamentoValue < 0) avanzamentoValue = 0;
+            if (avanzamentoInput) avanzamentoInput.value = avanzamentoValue;
+            calculatedScore += avanzamentoValue;
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                calculatedScore += discoveryItems[checkbox.dataset.item];
+            });
+            const percentage = (calculatedScore / maxTotalScore) * 100;
+            const clampedPercentage = Math.min(percentage, 100);
+            avanzamentoProgressBar.style.width = `${clampedPercentage}%`;
+            avanzamentoValueSpan.textContent = calculatedScore;
+            totalScoreSpan.textContent = clampedPercentage.toFixed(0) + '%';
+        }
+
+        function startCountdown() {
+            let minutes = parseInt(countdownInput.value);
+            if (isNaN(minutes) || minutes <= 0) return;
+            randomNumberDisplay.classList.add('hidden');
+            let seconds = minutes * 60;
+            countdownDisplay.textContent = `${minutes}:00`;
+            countdownDisplay.classList.remove('hidden');
+            startCountdownBtn.classList.add('hidden');
+            stopCountdownBtn.classList.remove('hidden');
+            countdownInterval = setInterval(() => {
+                seconds--;
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                countdownDisplay.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownDisplay.classList.add('hidden');
+                    const randomNumber = Math.floor(Math.random() * 70) + 1;
+                    randomNumberDisplay.textContent = randomNumber;
+                    randomNumberDisplay.classList.remove('hidden');
+                    startCountdownBtn.classList.remove('hidden');
+                    stopCountdownBtn.classList.add('hidden');
+                }
+            }, 1000);
+        }
+
+        function stopCountdown() {
+            clearInterval(countdownInterval);
+            countdownDisplay.classList.add('hidden');
+            startCountdownBtn.classList.remove('hidden');
+            stopCountdownBtn.classList.add('hidden');
+        }
+
+        function showSummary() {
+            const savedHeroes = loadHeroData();
+            summaryContent.innerHTML = '';
+            if (savedHeroes.length === 0) {
+                summaryContent.innerHTML = '<p class="text-gray-500 text-center">Nessun eroe salvato. Creane uno nuovo qui sotto.</p>';
+            } else {
+                savedHeroes.forEach(hero => {
+                    const heroDiv = document.createElement('div');
+                    heroDiv.className = 'mb-4 p-3 border rounded-lg shadow-sm bg-gray-50';
+                    const heroInventory = gameState.inventories[hero.name] || [];
+                    let inventoryHTML = '<ul class="text-sm text-gray-600 space-y-1">';
+                    if (heroInventory.length > 0) {
+                        heroInventory.forEach((item, index) => {
+                            inventoryHTML += `<li class="flex justify-between items-center"><span>${item.name} (Bonus: +${item.bonus})</span> <button onclick="removeItemFromSummary('${hero.name}', ${index})" class="text-red-500 hover:text-red-700 text-xs"><i class="fas fa-times-circle"></i></button></li>`;
+                        });
+                    } else {
+                         inventoryHTML += '<li>Nessun oggetto.</li>'
+                    }
+                    inventoryHTML += '</ul>';
+                    heroDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-blue-700">${hero.name}</h4>
+                             <button onclick="confirmDeleteHero('${hero.name}')" class="text-red-500 hover:text-red-700 text-sm"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                         <div class="flex items-center gap-2 mb-2">
+                            <label class="text-sm font-medium">HP:</label>
+                            <button onclick="adjustHpFromSummary('${hero.name}', -1)" class="w-6 h-6 flex items-center justify-center bg-gray-200 text-gray-700 rounded-full font-bold text-sm hover:bg-gray-300">-</button>
+                            <input type="number" value="${hero.hp}" onchange="updateHpFromSummary(event, '${hero.name}')" class="w-16 text-center border rounded-md p-1 text-sm">
+                            <button onclick="adjustHpFromSummary('${hero.name}', 1)" class="w-6 h-6 flex items-center justify-center bg-gray-200 text-gray-700 rounded-full font-bold text-sm hover:bg-gray-300">+</button>
+                        </div>
+                        <div class="pl-2 mt-2 border-t pt-2">
+                            <h5 class="text-sm font-semibold text-gray-800 mb-1">Inventario:</h5>
+                            ${inventoryHTML}
+                            <div class="mt-2 pt-2 border-t flex items-center gap-2 text-sm">
+                                <input type="text" id="summary-item-name-${hero.name.replace(/\s/g, '')}" placeholder="Nome Oggetto" class="flex-grow p-1 border rounded-md text-sm">
+                                <input type="number" id="summary-item-bonus-${hero.name.replace(/\s/g, '')}" placeholder="Bonus" value="0" class="w-16 p-1 border rounded-md text-sm">
+                                <button onclick="addItemFromSummary('${hero.name}')" class="bg-green-500 text-white rounded-md px-2 py-1 text-xs font-semibold hover:bg-green-600">Aggiungi</button>
+                            </div>
+                        </div>`;
+                    summaryContent.appendChild(heroDiv);
+                });
+            }
+            summaryModal.classList.add('visible');
+        }
+
+        function addNewHeroFromSummary() {
+            const nameInput = document.getElementById('new-hero-name-summary');
+            const hpInput = document.getElementById('new-hero-hp-summary');
+            const heroName = nameInput.value.trim();
+            const heroHP = parseInt(hpInput.value);
+
+            if (!heroName || isNaN(heroHP) || heroHP < 1) {
+                // simple feedback without alert
+                nameInput.classList.add('border-red-500');
+                hpInput.classList.add('border-red-500');
+                return;
+            }
+            nameInput.classList.remove('border-red-500');
+            hpInput.classList.remove('border-red-500');
+
+            let savedHeroes = loadHeroData();
+            if (savedHeroes.find(h => h.name === heroName)) {
+                // simple feedback without alert
+                 nameInput.classList.add('border-red-500');
+                return;
+            }
+
+            savedHeroes.push({ name: heroName, hp: heroHP });
+            saveHeroData(savedHeroes);
+            gameState.inventories[heroName] = [];
+            saveGameState();
+
+            nameInput.value = '';
+            hpInput.value = '30';
+            showSummary(); // Refresh the modal view
+        }
+        
+        function adjustHpFromSummary(heroName, value) {
+            let savedHeroes = loadHeroData();
+            const heroIndex = savedHeroes.findIndex(h => h.name === heroName);
+            if (heroIndex > -1) {
+                savedHeroes[heroIndex].hp = parseInt(savedHeroes[heroIndex].hp) + value;
+                if (savedHeroes[heroIndex].hp < 0) savedHeroes[heroIndex].hp = 0;
+                saveHeroData(savedHeroes);
+                showSummary();
+            }
+        }
+        
+        function updateHpFromSummary(event, heroName) {
+            let savedHeroes = loadHeroData();
+            const heroIndex = savedHeroes.findIndex(h => h.name === heroName);
+            if (heroIndex > -1) {
+                let newHP = parseInt(event.target.value);
+                if(isNaN(newHP) || newHP < 0) newHP = 0;
+                savedHeroes[heroIndex].hp = newHP;
+                saveHeroData(savedHeroes);
+                showSummary();
+            }
+        }
+        
+        function addItemFromSummary(heroName) {
+            const cleanHeroName = heroName.replace(/\s/g, '');
+            const itemNameInput = document.getElementById(`summary-item-name-${cleanHeroName}`);
+            const itemBonusInput = document.getElementById(`summary-item-bonus-${cleanHeroName}`);
+            const itemName = itemNameInput.value.trim();
+            const itemBonus = parseInt(itemBonusInput.value);
+            if (!itemName || isNaN(itemBonus) || itemBonus < 0) return;
+            const heroInventory = gameState.inventories[heroName] || [];
+            heroInventory.push({ name: itemName, bonus: itemBonus });
+            gameState.inventories[heroName] = heroInventory;
+            saveGameState();
+            showSummary();
+        }
+
+        function removeItemFromSummary(heroName, itemIndex) {
+            const heroInventory = gameState.inventories[heroName] || [];
+            heroInventory.splice(itemIndex, 1);
+            gameState.inventories[heroName] = heroInventory;
+            saveGameState();
+            showSummary();
+        }
+        
+        function confirmDeleteHero(heroName) {
+            deleteModalText.textContent = `Sei sicuro di voler eliminare l'eroe "${heroName}"? Verrà rimosso anche il suo inventario.`;
+            confirmDeleteBtn.dataset.id = heroName;
+            confirmDeleteBtn.dataset.type = 'hero';
+            deleteModal.classList.add('visible');
+        }
+
+        function deleteHero(heroName) {
+            let savedHeroes = loadHeroData();
+            savedHeroes = savedHeroes.filter(h => h.name !== heroName);
+            saveHeroData(savedHeroes);
+            delete gameState.inventories[heroName];
+            saveGameState();
+            showSummary();
+        }
+
+        function saveGameState() {
+            localStorage.setItem('TanaDelRagnoState', JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const state = JSON.parse(localStorage.getItem('TanaDelRagnoState'));
+            if (state) {
+                gameState = state;
+            }
+        }
+        
+        let heroData = [];
+        function saveHeroData(data) {
+            heroData = data;
+            localStorage.setItem('heroData', JSON.stringify(heroData));
+        }
+
+        function loadHeroData() {
+            heroData = JSON.parse(localStorage.getItem('heroData') || '[]');
+            return heroData;
+        }
+
+        function updateInitialBonusPoints() {
+            const numPlayers = parseInt(document.getElementById('numPlayers').value);
+            const numEnemies = parseInt(document.getElementById('numEnemies').value);
+            document.getElementById('playerBonusPoints').value = numPlayers > 2 ? 2 : (numPlayers === 2 ? 1 : 0);
+            document.getElementById('enemyBonusPoints').value = numEnemies > 2 ? 2 : (numEnemies === 2 ? 1 : 0);
+        }
+
+        function changeCounter(inputId, value) {
+            const input = document.getElementById(inputId);
+            let currentValue = parseInt(input.value);
+            let newValue = currentValue + value;
+            if (newValue >= 1 && newValue <= 10) {
+                input.value = newValue;
+                updateInitialBonusPoints();
+            }
+        }
+        
+        function changeHealthValue(inputId, value) {
+            const input = document.getElementById(inputId);
+            let currentValue = parseInt(input.value);
+            let newValue = currentValue + value;
+            if (newValue >= 1) input.value = newValue;
+        }
+
+        function renderBattlesList() {
+            const container = document.getElementById('battles-list-container');
+            container.innerHTML = '';
+            if (gameState.battles.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">Nessuna battaglia in corso. Creane una nuova!</p>';
+            } else {
+                gameState.battles.forEach(battle => {
+                    const battleDiv = document.createElement('div');
+                    battleDiv.className = 'flex justify-between items-center p-3 bg-gray-100 rounded-lg shadow-sm';
+                    battleDiv.innerHTML = `
+                        <span class="font-semibold text-gray-700">${battle.name}</span>
+                        <div>
+                            <button onclick="continueBattle('${battle.id}')" class="text-sm bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600">Continua</button>
+                            <button onclick="confirmDeleteBattle('${battle.id}')" class="text-sm bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 ml-2"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    container.appendChild(battleDiv);
+                });
+            }
+             switchView('battles-section');
+        }
+
+        function showNewBattleSetup() {
+            updateInitialBonusPoints();
+            switchView('setup-section');
+        }
+        
+        function goToDetailedSetup() {
+            newBattleSetup.numPlayers = parseInt(document.getElementById('numPlayers').value);
+            newBattleSetup.numEnemies = parseInt(document.getElementById('numEnemies').value);
+            newBattleSetup.playerBonus = parseInt(document.getElementById('playerBonusPoints').value);
+            newBattleSetup.enemyBonus = parseInt(document.getElementById('enemyBonusPoints').value);
+            if (isNaN(newBattleSetup.numPlayers) || isNaN(newBattleSetup.numEnemies) || newBattleSetup.numPlayers < 1 || newBattleSetup.numEnemies < 1) return;
+            
+            updateDetailedSetupSection();
+            switchView('detailed-setup-section');
+        }
+        
+        function backToNewBattleSetup() {
+            switchView('setup-section');
+        }
+
+        function setAllEnemyHP(hp) {
+            const numEnemies = newBattleSetup.numEnemies;
+            for (let i = 1; i <= numEnemies; i++) {
+                const input = document.getElementById(`initialEnemyHealth-${i}`);
+                if (input) {
+                    input.value = hp;
+                }
+            }
+        }
+
+        function updateDetailedSetupSection() {
+            const eroeInputsContainer = document.getElementById('eroe-inputs-container');
+            const enemyInputsContainer = document.getElementById('enemy-inputs-container');
+            eroeInputsContainer.innerHTML = '';
+            enemyInputsContainer.innerHTML = '';
+            const savedData = loadHeroData();
+            for (let i = 1; i <= newBattleSetup.numPlayers; i++) {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4';
+                inputGroup.innerHTML = `
+                    <div class="flex-1 w-full flex flex-col items-start">
+                        <label for="playerName-${i}" class="block text-lg font-medium text-blue-700 mb-2">Nome Eroe ${i}:</label>
+                        <input type="text" id="playerName-${i}" placeholder="Eroe ${i}" class="w-full text-center text-xl font-bold text-blue-600 bg-white border border-blue-300 rounded-lg p-3">
+                        <select onchange="updateHeroHP(this, ${i})" class="mt-2 w-full text-sm text-gray-700 bg-white border border-blue-300 rounded-lg p-2">
+                            <option value="">Seleziona un eroe salvato</option>
+                        </select>
+                        <button onclick="openInventoryModal('playerName-${i}')" class="mt-2 text-sm text-blue-500 hover:underline">Gestisci Inventario</button>
+                    </div>
+                    <div class="flex-1 w-full">
+                        <label for="initialPlayerHealth-${i}" class="block text-lg font-medium text-blue-700 mb-2">PF Iniziali:</label>
+                        <div class="flex items-center justify-center">
+                            <button onclick="changeHealthValue('initialPlayerHealth-${i}', -1)" class="button bg-blue-500 text-white rounded-l-full px-4 py-2 font-bold text-xl hover:bg-blue-600">-</button>
+                            <input type="number" id="initialPlayerHealth-${i}" min="1" value="30" class="w-20 text-center text-xl font-bold text-blue-600 bg-white border-t border-b border-blue-300 p-3 input-dice">
+                            <button onclick="changeHealthValue('initialPlayerHealth-${i}', 1)" class="button bg-blue-500 text-white rounded-r-full px-4 py-2 font-bold text-xl hover:bg-blue-600">+</button>
+                        </div>
+                    </div>`;
+                eroeInputsContainer.appendChild(inputGroup);
+            }
+            eroeInputsContainer.querySelectorAll('select').forEach(select => {
+                savedData.forEach(hero => {
+                    const option = document.createElement('option');
+                    option.value = hero.name;
+                    option.textContent = hero.name;
+                    option.dataset.hp = hero.hp; 
+                    select.appendChild(option);
+                });
+            });
+            for (let i = 1; i <= newBattleSetup.numEnemies; i++) {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'flex items-center space-x-4';
+                inputGroup.innerHTML = `
+                    <div class="flex-1 w-full">
+                        <label for="initialEnemyHealth-${i}" class="block text-lg font-medium text-red-700 mb-2">PF Nemico ${i}:</label>
+                        <div class="flex items-center justify-center">
+                            <button onclick="changeHealthValue('initialEnemyHealth-${i}', -1)" class="button bg-red-500 text-white rounded-l-full px-4 py-2 font-bold text-xl hover:bg-red-600">-</button>
+                            <input type="number" id="initialEnemyHealth-${i}" min="1" value="10" class="w-20 text-center text-xl font-bold text-red-600 bg-white border-t border-b border-red-300 p-3 input-dice">
+                            <button onclick="changeHealthValue('initialEnemyHealth-${i}', 1)" class="button bg-red-500 text-white rounded-r-full px-4 py-2 font-bold text-xl hover:bg-red-600">+</button>
+                        </div>
+                    </div>`;
+                enemyInputsContainer.appendChild(inputGroup);
+            }
+        }
+        
+        function updateHeroHP(selectElement, index) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const playerNameInput = document.getElementById(`playerName-${index}`);
+            const playerHPInput = document.getElementById(`initialPlayerHealth-${index}`);
+            if (selectedOption.value) {
+                playerNameInput.value = selectedOption.value;
+                playerHPInput.value = selectedOption.dataset.hp || 30;
+            }
+        }
+
+        function startGame() {
+            const battleNameInput = document.getElementById('battleNameInput');
+            let battleName = battleNameInput.value.trim();
+            
+            if (!battleName) {
+                battleName = `Battaglia ${gameState.battles.length + 1}`;
+            }
+
+            const newBattle = {
+                id: Date.now().toString(),
+                name: battleName,
+                heroNames: [],
+                enemyNames: [],
+                healthPoints: {},
+                playerBonus: newBattleSetup.playerBonus,
+                enemyBonus: newBattleSetup.enemyBonus,
+                roundNumber: 0,
+                battleLog: ''
+            };
+
+            for (let i = 1; i <= newBattleSetup.numPlayers; i++) {
+                let name = document.getElementById(`playerName-${i}`).value.trim() || `Eroe ${i}`;
+                newBattle.heroNames.push(name);
+                const initialHealth = parseInt(document.getElementById(`initialPlayerHealth-${i}`).value);
+                 if (isNaN(initialHealth) || initialHealth < 1) return;
+                newBattle.healthPoints[name] = initialHealth;
+            }
+            for (let i = 1; i <= newBattleSetup.numEnemies; i++) {
+                const name = `Nemico ${i}`;
+                newBattle.enemyNames.push(name);
+                const initialHealth = parseInt(document.getElementById(`initialEnemyHealth-${i}`).value);
+                if (isNaN(initialHealth) || initialHealth < 1) return;
+                newBattle.healthPoints[name] = initialHealth;
+            }
+
+            gameState.battles.push(newBattle);
+            gameState.activeBattleId = newBattle.id;
+            saveGameState();
+            battleNameInput.value = '';
+            renderGameSection(newBattle);
+        }
+
+        function continueBattle(battleId) {
+            const battle = gameState.battles.find(b => b.id === battleId);
+            if (battle) {
+                gameState.activeBattleId = battleId;
+                saveGameState();
+                renderGameSection(battle);
+            }
+        }
+
+        function updateDynamicBonusDisplay(battle) {
+            if (!battle) return;
+
+            let playerBonusToDisplay, playerBonusLabel;
+            let enemyBonusToDisplay, enemyBonusLabel;
+
+            // Player Bonus Logic
+            if (battle.playerBonus === 0) {
+                playerBonusToDisplay = 0;
+                playerBonusLabel = "Bonus Fisso";
+            } else {
+                if (battle.roundNumber === 0) {
+                    playerBonusToDisplay = battle.playerBonus;
+                    playerBonusLabel = "Bonus Iniziale";
+                } else {
+                    const livingHeroes = battle.heroNames.filter(name => battle.healthPoints[name] > 0);
+                    playerBonusToDisplay = livingHeroes.length > 2 ? 2 : (livingHeroes.length === 2 ? 1 : 0);
+                    playerBonusLabel = "Bonus Attuale";
+                }
+            }
+
+            // Enemy Bonus Logic
+            if (battle.enemyBonus === 0) {
+                enemyBonusToDisplay = 0;
+                enemyBonusLabel = "Bonus Fisso";
+            } else {
+                const livingEnemies = battle.enemyNames.filter(name => battle.healthPoints[name] > 0);
+                enemyBonusToDisplay = livingEnemies.length > 2 ? 2 : (livingEnemies.length === 2 ? 1 : 0);
+                enemyBonusLabel = "Bonus Attuale";
+            }
+
+            const playerBonusDisplay = document.getElementById('player-bonus-display');
+            const enemyBonusDisplay = document.getElementById('enemy-bonus-display');
+
+            if (playerBonusDisplay) {
+                playerBonusDisplay.textContent = `${playerBonusLabel}: ${playerBonusToDisplay}`;
+            }
+            if (enemyBonusDisplay) {
+                enemyBonusDisplay.textContent = `${enemyBonusLabel}: ${enemyBonusToDisplay}`;
+            }
+        }
+
+        function renderGameSection(battle) {
+            document.getElementById('current-battle-name').textContent = battle.name;
+            document.getElementById('battleLog').innerHTML = battle.battleLog || '';
+
+            const inputsContainer = document.getElementById('dice-inputs-container');
+            inputsContainer.innerHTML = '';
+            const eroeGroup = document.createElement('div');
+            eroeGroup.className = 'bg-blue-50 p-6 rounded-lg';
+            eroeGroup.innerHTML = `<h2 class="text-xl font-bold text-blue-800 mb-2">Eroi</h2><p id="player-bonus-display" class="text-blue-600 font-semibold mb-4"></p><div class="space-y-4" id="eroi-list"></div>`;
+            inputsContainer.appendChild(eroeGroup);
+            const enemyGroup = document.createElement('div');
+            enemyGroup.className = 'bg-red-50 p-6 rounded-lg';
+            enemyGroup.innerHTML = `<h2 class="text-xl font-bold text-red-800 mb-2">Nemici</h2><p id="enemy-bonus-display" class="text-red-600 font-semibold mb-4"></p><div class="space-y-4" id="enemies-list"></div>`;
+            inputsContainer.appendChild(enemyGroup);
+            
+            updateDynamicBonusDisplay(battle);
+            
+            const eroiList = document.getElementById('eroi-list');
+            battle.heroNames.forEach(name => {
+                const cleanName = name.replace(/\s/g, '');
+                const inventoryBonus = (gameState.inventories[name] || []).reduce((total, item) => total + item.bonus, 0);
+                const health = battle.healthPoints[name];
+                eroiList.innerHTML += `
+                    <div class="flex items-center justify-between space-x-2">
+                        <div class="w-1/2 flex-shrink-0 flex flex-col items-start">
+                            <label for="dice-${cleanName}" class="block text-base font-medium text-blue-700">${name} (<span id="health-${cleanName}" class="${health <= 0 ? 'text-red-500 font-bold' : ''}">${health > 0 ? health : 'morto'}</span>)</label>
+                            <p class="text-xs text-blue-500">Bonus Inventario: ${inventoryBonus}</p>
+                            <div class="flex flex-row items-center space-x-1 mt-1">
+                                <button onclick="adjustHealth('${name}', -1)" class="w-6 h-6 flex items-center justify-center bg-gray-300 rounded-full font-bold hover:bg-gray-400">-</button>
+                                <button onclick="adjustHealth('${name}', 1)" class="w-6 h-6 flex items-center justify-center bg-gray-300 rounded-full font-bold hover:bg-gray-400">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                           <button onclick="changeDiceValue('dice-${cleanName}', -1)" class="w-7 h-7 flex items-center justify-center bg-blue-300 rounded-full font-bold hover:bg-blue-400">-</button>
+                           <input type="number" id="dice-${cleanName}" min="1" max="90" value="1" class="input-dice w-12 text-center text-lg font-bold text-blue-600 bg-white border border-blue-300 rounded-lg p-1">
+                           <button onclick="changeDiceValue('dice-${cleanName}', 1)" class="w-7 h-7 flex items-center justify-center bg-blue-300 rounded-full font-bold hover:bg-blue-400">+</button>
+                       </div>
+                    </div>`;
+            });
+            const enemiesList = document.getElementById('enemies-list');
+            battle.enemyNames.forEach(name => {
+                const cleanName = name.replace(/\s/g, '');
+                const health = battle.healthPoints[name];
+                enemiesList.innerHTML += `
+                    <div class="flex items-center justify-between space-x-2">
+                        <div class="w-1/2 flex-shrink-0 flex flex-col items-start">
+                            <label for="dice-${cleanName}" class="block text-base font-medium text-red-700">${name} (<span id="health-${cleanName}" class="${health <= 0 ? 'text-red-500 font-bold' : ''}">${health > 0 ? health : 'morto'}</span>)</label>
+                            <div class="flex flex-row items-center space-x-1 mt-1">
+                                <button onclick="adjustHealth('${name}', -1)" class="w-6 h-6 flex items-center justify-center bg-gray-300 rounded-full font-bold hover:bg-gray-400">-</button>
+                                <button onclick="adjustHealth('${name}', 1)" class="w-6 h-6 flex items-center justify-center bg-gray-300 rounded-full font-bold hover:bg-gray-400">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="changeDiceValue('dice-${cleanName}', -1)" class="w-7 h-7 flex items-center justify-center bg-red-300 rounded-full font-bold hover:bg-red-400">-</button>
+                            <input type="number" id="dice-${cleanName}" min="1" max="90" value="1" class="input-dice w-12 text-center text-lg font-bold text-red-600 bg-white border border-red-300 rounded-lg p-1">
+                            <button onclick="changeDiceValue('dice-${cleanName}', 1)" class="w-7 h-7 flex items-center justify-center bg-red-300 rounded-full font-bold hover:bg-red-400">+</button>
+                        </div>
+                    </div>`;
+            });
+            switchView('game-section');
+        }
+
+
+        function adjustHealth(name, value) {
+            const battle = gameState.battles.find(b => b.id === gameState.activeBattleId);
+            if (!battle) return;
+
+            battle.healthPoints[name] += value;
+            if (battle.healthPoints[name] < 0) battle.healthPoints[name] = 0;
+            
+            const cleanName = name.replace(/\s/g, '');
+            const healthSpan = document.getElementById(`health-${cleanName}`);
+            if (healthSpan) {
+                if (battle.healthPoints[name] <= 0) {
+                    healthSpan.textContent = 'morto';
+                    healthSpan.classList.add('text-red-500', 'font-bold');
+                } else {
+                    healthSpan.textContent = battle.healthPoints[name];
+                    healthSpan.classList.remove('text-red-500', 'font-bold');
+                }
+            }
+            if (battle.heroNames.includes(name)) {
+                let savedHeroes = loadHeroData();
+                const heroIndex = savedHeroes.findIndex(h => h.name === name);
+                if (heroIndex > -1) {
+                    savedHeroes[heroIndex].hp = battle.healthPoints[name];
+                    saveHeroData(savedHeroes);
+                }
+            }
+            updateDynamicBonusDisplay(battle);
+            saveGameState();
+        }
+        
+        function changeDiceValue(inputId, value) {
+            const input = document.getElementById(inputId);
+            let newValue = parseInt(input.value) + value;
+            if (newValue >= 1 && newValue <= 90) input.value = newValue;
+        }
+
+        function endBattle() {
+            if (gameState.activeBattleId) {
+                const battle = gameState.battles.find(b => b.id === gameState.activeBattleId);
+                if (battle) {
+                    let savedHeroes = loadHeroData();
+                    battle.heroNames.forEach(heroName => {
+                        const finalHP = battle.healthPoints[heroName] < 0 ? 0 : battle.healthPoints[heroName];
+                        const heroIndex = savedHeroes.findIndex(h => h.name === heroName);
+                        
+                        if (heroIndex > -1) {
+                            // Update existing hero's HP
+                            savedHeroes[heroIndex].hp = finalHP;
+                        } else {
+                            // Add new hero to the saved list
+                            savedHeroes.push({ name: heroName, hp: finalHP });
+                            // Also initialize their inventory if it doesn't exist
+                            if (!gameState.inventories[heroName]) {
+                                gameState.inventories[heroName] = [];
+                            }
+                        }
+                    });
+                    saveHeroData(savedHeroes);
+                }
+                deleteBattle(gameState.activeBattleId);
+            }
+        }
+        
+        function backToBattlesList() {
+            gameState.activeBattleId = null;
+            saveGameState();
+            renderBattlesList();
+        }
+
+        function openInventoryModal(inputId) {
+            const heroNameInput = document.getElementById(inputId);
+            let heroName = heroNameInput.value.trim() || heroNameInput.placeholder;
+            currentHeroForInventory = heroName;
+            inventoryHeroName.textContent = heroName;
+            renderInventory();
+            inventoryModal.classList.add('visible');
+        }
+
+        function renderInventory() {
+            inventoryItemsContainer.innerHTML = '';
+            const heroInventory = gameState.inventories[currentHeroForInventory] || [];
+            if (heroInventory.length === 0) {
+                inventoryItemsContainer.innerHTML = '<p class="text-gray-500">Nessun oggetto.</p>';
+            } else {
+                heroInventory.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex items-center justify-between p-2 border-b last:border-b-0';
+                    itemDiv.innerHTML = `
+                        <p class="font-semibold">${item.name} <span class="text-xs text-gray-500">(Bonus: +${item.bonus})</span></p>
+                        <button onclick="removeItemFromInventory(${index})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button>`;
+                    inventoryItemsContainer.appendChild(itemDiv);
+                });
+            }
+        }
+        
+        function addItemToInventory() {
+            const name = newItemNameInput.value.trim();
+            const bonus = parseInt(newItemBonusInput.value) || 0;
+            if (!name) return;
+            if (!gameState.inventories[currentHeroForInventory]) gameState.inventories[currentHeroForInventory] = [];
+            gameState.inventories[currentHeroForInventory].push({ name, bonus });
+            saveGameState();
+            renderInventory();
+            newItemNameInput.value = '';
+            newItemBonusInput.value = '0';
+        }
+
+        function removeItemFromInventory(itemIndex) {
+            gameState.inventories[currentHeroForInventory].splice(itemIndex, 1);
+            saveGameState();
+            renderInventory();
+        }
+
+        function calculate() {
+            const battle = gameState.battles.find(b => b.id === gameState.activeBattleId);
+            if (!battle) return;
+
+            battle.roundNumber++;
+            const battleLog = document.getElementById('battleLog');
+            const roundContainer = document.createElement('div');
+            roundContainer.className = 'p-4 border-b border-gray-300 last:border-b-0';
+
+            const livingHeroes = battle.heroNames.filter(name => battle.healthPoints[name] > 0);
+            const livingEnemies = battle.enemyNames.filter(name => battle.healthPoints[name] > 0);
+            
+            let playerBonusForCalc;
+            if (battle.playerBonus === 0) {
+                playerBonusForCalc = 0;
+            } else {
+                if (battle.roundNumber === 1) {
+                    playerBonusForCalc = battle.playerBonus;
+                } else {
+                    playerBonusForCalc = livingHeroes.length > 2 ? 2 : (livingHeroes.length === 2 ? 1 : 0);
+                }
+            }
+            
+            let enemyBonusForCalc;
+            if (battle.enemyBonus === 0) {
+                enemyBonusForCalc = 0;
+            } else {
+                enemyBonusForCalc = livingEnemies.length > 2 ? 2 : (livingEnemies.length === 2 ? 1 : 0);
+            }
+
+            let roundHTML = `<h3 class="text-xl font-bold text-gray-800 mb-2">Round ${battle.roundNumber}</h3>
+                             <p class="text-xs text-gray-500 mb-2">Bonus Eroi: +${playerBonusForCalc} | Bonus Nemici (vivi: ${livingEnemies.length}): +${enemyBonusForCalc}</p>`;
+            
+            const eroeRolls = [];
+            const enemyRolls = [];
+            let hasInvalidValue = false;
+
+            livingHeroes.forEach(name => {
+                const cleanName = name.replace(/\s/g, '');
+                const diceInput = document.getElementById(`dice-${cleanName}`);
+                if (!diceInput) return;
+                const diceValue = parseInt(diceInput.value);
+                if (isNaN(diceValue) || diceValue < 1 || diceValue > 90) hasInvalidValue = true;
+                const inventoryBonus = (gameState.inventories[name] || []).reduce((t, i) => t + i.bonus, 0);
+                eroeRolls.push({ name, roll: diceValue, inventoryBonus, totalBonus: playerBonusForCalc + inventoryBonus, effectiveRoll: diceValue + playerBonusForCalc + inventoryBonus });
+            });
+
+            livingEnemies.forEach(name => {
+                const cleanName = name.replace(/\s/g, '');
+                const diceInput = document.getElementById(`dice-${cleanName}`);
+                if (!diceInput) return;
+                const diceValue = parseInt(diceInput.value);
+                if (isNaN(diceValue) || diceValue < 1 || diceValue > 90) hasInvalidValue = true;
+                enemyRolls.push({ name, roll: diceValue, totalBonus: enemyBonusForCalc, effectiveRoll: diceValue + enemyBonusForCalc });
+            });
+
+            if (hasInvalidValue) {
+                roundContainer.innerHTML = roundHTML + '<p class="text-red-500">Errore: Valori dadi non validi (1-90).</p>';
+                battleLog.prepend(roundContainer);
+                return;
+            }
+
+            roundHTML += '<div class="grid grid-cols-2 gap-x-4">';
+            roundHTML += '<div><p class="font-semibold text-blue-800">Tiri Eroi:</p><ul class="text-xs pl-2">';
+            eroeRolls.forEach(e => {
+                roundHTML += `<li>${e.name}: ${e.roll} + ${e.totalBonus} = ${e.effectiveRoll}</li>`;
+            });
+            roundHTML += '</ul></div>';
+
+            roundHTML += '<div><p class="font-semibold text-red-800">Tiri Nemici:</p><ul class="text-xs pl-2">';
+            enemyRolls.forEach(e => {
+                roundHTML += `<li>${e.name}: ${e.roll} + ${e.totalBonus} = ${e.effectiveRoll}</li>`;
+            });
+            roundHTML += '</ul></div></div>';
+
+
+            const initialHealthThisTurn = {...battle.healthPoints};
+            const turnLosses = {};
+            const heroDamageDealt = {};
+            const enemyDamageDealt = {};
+            const finalBlows = {};
+            battle.heroNames.forEach(name => heroDamageDealt[name] = {});
+            battle.enemyNames.forEach(name => enemyDamageDealt[name] = {});
+            [...battle.heroNames, ...battle.enemyNames].forEach(name => turnLosses[name] = 0);
+            
+            eroeRolls.forEach(eroe => {
+                enemyRolls.forEach(enemy => {
+                    if (battle.healthPoints[eroe.name] <= 0 || battle.healthPoints[enemy.name] <= 0) return;
+                    const diff = Math.abs(eroe.effectiveRoll - enemy.effectiveRoll);
+                    if (eroe.effectiveRoll > enemy.effectiveRoll) {
+                        turnLosses[enemy.name] += diff;
+                        heroDamageDealt[eroe.name][enemy.name] = (heroDamageDealt[eroe.name][enemy.name] || 0) + diff;
+                    } else if (enemy.effectiveRoll > eroe.effectiveRoll) {
+                        turnLosses[eroe.name] += diff;
+                        enemyDamageDealt[enemy.name][eroe.name] = (enemyDamageDealt[enemy.name][eroe.name] || 0) + diff;
+                    }
+                });
+            });
+
+            roundHTML += '<div class="mt-4 border-t pt-2">';
+            [...battle.heroNames, ...battle.enemyNames].forEach((name) => {
+                const totalLoss = turnLosses[name];
+                if (totalLoss > 0) {
+                    battle.healthPoints[name] -= totalLoss;
+                    roundHTML += `<p>${name} ha perso ${totalLoss} PF </p>`;
+                }
+                const healthSpan = document.getElementById(`health-${name.replace(/\s/g, '')}`);
+                if (healthSpan) {
+                     if (battle.healthPoints[name] <= 0) {
+                        healthSpan.textContent = 'morto';
+                        healthSpan.classList.add('text-red-500', 'font-bold');
+                         if (battle.enemyNames.includes(name) && initialHealthThisTurn[name] > 0) {
+                            let maxDamage = 0;
+                            let finalHero = 'Nessuno';
+                            for(const hero in heroDamageDealt) {
+                                if (heroDamageDealt[hero][name] && heroDamageDealt[hero][name] > maxDamage) {
+                                    maxDamage = heroDamageDealt[hero][name];
+                                    finalHero = hero;
+                                }
+                            }
+                            finalBlows[name] = finalHero;
+                        }
+                    } else {
+                        healthSpan.textContent = battle.healthPoints[name];
+                        healthSpan.classList.remove('text-red-500', 'font-bold');
+                    }
+                }
+            });
+            roundHTML += '</div>';
+
+            let damageHTML = '';
+            for (const hero in heroDamageDealt) {
+                for (const enemy in heroDamageDealt[hero]) {
+                    damageHTML += `<p class="text-xs text-green-700 ml-4">${hero} ha inflitto ${heroDamageDealt[hero][enemy]} PF a ${enemy}.</p>`;
+                }
+            }
+            for (const enemy in enemyDamageDealt) {
+                for (const hero in enemyDamageDealt[enemy]) {
+                    damageHTML += `<p class="text-xs text-red-700 ml-4">${enemy} ha inflitto ${enemyDamageDealt[enemy][hero]} PF a ${hero}.</p>`;
+                }
+            }
+            if (damageHTML) roundHTML += `<p class="mt-2 font-semibold">Dettaglio Danni:</p>${damageHTML}`;
+
+            if (Object.keys(finalBlows).length > 0) {
+                roundHTML += '<p class="mt-2 font-semibold text-green-600">Nemici Sconfitti:</p>';
+                for(const enemy in finalBlows) {
+                    roundHTML += `<p class="text-xs text-gray-600 ml-4">${enemy} è stato sconfitto da ${finalBlows[enemy]}.</p>`;
+                }
+            }
+
+            roundContainer.innerHTML = roundHTML;
+            battle.battleLog = roundContainer.outerHTML + battle.battleLog;
+            battleLog.prepend(roundContainer);
+
+            updateDynamicBonusDisplay(battle);
+            saveGameState();
+        }
+
+        function confirmDeleteBattle(battleId) {
+            const battle = gameState.battles.find(b => b.id === battleId);
+            if(battle){
+                deleteModalText.textContent = `Sei sicuro di voler cancellare la battaglia "${battle.name}"? Questa azione è irreversibile.`;
+                confirmDeleteBtn.dataset.id = battleId;
+                confirmDeleteBtn.dataset.type = 'battle';
+                deleteModal.classList.add('visible');
+            }
+        }
+
+        function deleteBattle(battleId) {
+            gameState.battles = gameState.battles.filter(b => b.id !== battleId);
+            saveGameState();
+            renderBattlesList();
+        }
+
+    </script>
+</body>
+</html>
