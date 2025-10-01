@@ -1,6 +1,6 @@
 {
   "name": "La tana del ragno",
-  "short_name": "La tana del ragno",
+  "short_name": "Tana del Ragno",
   "description": "Gioco GDR creato da me",
   
   // Dove l'app dovrebbe iniziare quando viene lanciata dalla schermata Home
@@ -38,4 +38,5 @@
   ]
 
 }
+
 
